@@ -25,7 +25,7 @@ namespace Challenge1
 		{
 			OpenFileDialog ofd = new OpenFileDialog();
 			ofd.DefaultExt = ".csv";
-			ofd.Filter = "Comma Separated (*.csv)|*.csv";
+			ofd.Filter = "Comma Separated (*.csv)|*.csv"; 
 			ofd.ShowDialog();
 
 			txtFileName.Text = ofd.FileName;
@@ -64,6 +64,7 @@ namespace Challenge1
 						MessageBox.Show("No file data");
 						return null;
 					}
+					//regex for parsing the string between the ; and ignore it in the ""
 					Regex CSVParser = new Regex(";(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
 					string[] headerColumns = CSVParser.Split(header);
 
@@ -72,7 +73,7 @@ namespace Challenge1
 						importedData.Columns.Add(headerColumn);
 					}
 
-					// Read the stream to a string, and write the string to the console.
+					// Read the stream line by line until I reach the .jpg
 					while (!sr.EndOfStream)
 					{
 						StringBuilder line = new StringBuilder(sr.ReadLine());
@@ -100,7 +101,7 @@ namespace Challenge1
 
 			return importedData;
 		}
-
+		//pushing the values imported to the database
 		private void SaveImportDataToDatabase(DataTable importData)
 		{
 
@@ -110,6 +111,7 @@ namespace Challenge1
 				int i = 0;
 				foreach (DataRow importRow in importData.Rows)
 				{
+					//inserting only 17 records because it takes to much time
 					if (i < 17)
 					{
 						SqlCommand cmd = new SqlCommand("INSERT INTO Product4" +
@@ -135,7 +137,7 @@ namespace Challenge1
 						cmd.Parameters.AddWithValue("@bildname", importRow["Bildname"]);
 						cmd.ExecuteNonQuery();
 
-
+						//inserting data in the view model
 						dataGridView1.Rows.Add();
 						dataGridView1.Rows[i].Cells[0].Value = importRow["Hauptartikelnr"].ToString();
 						dataGridView1.Rows[i].Cells[1].Value = importRow["Artikelname"].ToString();
@@ -170,6 +172,7 @@ namespace Challenge1
 
 		private void btnAdd_Click(object sender, EventArgs e)
 		{
+			//pushing the new records into database
 			using (SqlConnection conn = new SqlConnection(" Server = 192.168.12.202; Database = TestDB; User Id = sa; Password = Clarity123"))
 			{
 				conn.Open();
@@ -194,10 +197,7 @@ namespace Challenge1
 
 		private void ReadCSVFile_CellContentClick(object sender, DataGridViewCellEventArgs e)
 		{
-			//using (SqlConnection conn = new SqlConnection(" Server = 192.168.12.202; Database = TestDB; User Id = sa; Password = Clarity123"))
-			//{
-			//	conn.Open();
-			//}
+		
 		}
 	}
 }
